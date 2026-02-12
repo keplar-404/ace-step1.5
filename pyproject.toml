@@ -1,0 +1,43 @@
+[project]
+name = "acestep-auto-download"
+version = "1.5.0"
+description = "ACE-Step 1.5 with automatic model downloading (NVIDIA GPU)"
+authors = [{name = "ACE-Step Contributors"}]
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+readme = "README.md"
+
+dependencies = [
+    "torch>=2.0.0",
+    "torchaudio>=2.0.0",
+    "transformers>=4.36.0",
+    "diffusers>=0.28.0",
+    "soundfile>=0.12.1",
+    "loguru>=0.7.0",
+    "peft>=0.14.0",  # For custom LoRA loading at inference
+    "huggingface_hub>=0.20.0",  # For automatic model downloading
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+]
+quantization = [
+    "torchao>=0.1.0",  # For int8/fp8 quantization
+]
+flash-attn = [
+    "flash-attn>=2.0.0",  # For flash attention
+]
+modelscope = [
+    "modelscope>=1.9.0",  # Alternative download source (China)
+]
+
+[project.scripts]
+acestep-download = "acestep.model_downloader:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
