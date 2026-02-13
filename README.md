@@ -1,255 +1,332 @@
-<h1 align="center">ACE-Step 1.5</h1>
-<h1 align="center">Pushing the Boundaries of Open-Source Music Generation</h1>
-<p align="center">
-    <a href="https://ace-step.github.io/ace-step-v1.5.github.io/">Project</a> |
-    <a href="https://huggingface.co/ACE-Step/Ace-Step1.5">Hugging Face</a> |
-    <a href="https://modelscope.cn/models/ACE-Step/Ace-Step1.5">ModelScope</a> |
-    <a href="https://huggingface.co/spaces/ACE-Step/Ace-Step-v1.5">Space Demo</a> |
-    <a href="https://discord.gg/PeWDxrkdj7">Discord</a> |
-    <a href="https://arxiv.org/abs/2602.00744">Technical Report</a>
-</p>
+# ACE-Step 1.5 - Music Generation
 
-<p align="center">
-    <img src="./assets/orgnization_logos.png" width="100%" alt="StepFun Logo">
-</p>
+AI-powered music generation from text descriptions. Generate full songs with vocals, instrumentals, covers, and more.
 
-## Table of Contents
+## 🎵 What Can It Do?
 
-- [✨ Features](#-features)
-- [⚡ Quick Start](#-quick-start)
-- [🚀 Launch Scripts](#-launch-scripts)
-- [📚 Documentation](#-documentation)
-- [📖 Tutorial](#-tutorial)
-- [🏗️ Architecture](#️-architecture)
-- [🦁 Model Zoo](#-model-zoo)
-- [🔬 Benchmark](#-benchmark)
+- **Text-to-Music**: Generate complete songs from descriptions
+- **Lyrics Support**: Create music with custom lyrics or auto-generate them
+- **Audio Covers**: Transform existing audio into new styles
+- **Audio Editing**: Repaint/regenerate specific time segments
+- **Multi-track**: Generate specific instruments (Lego mode)
+- **Source Separation**: Extract individual instruments from mixes
+- **Track Completion**: Extend and complete partial tracks
 
-## 📝 Abstract
-🚀 We present ACE-Step v1.5, a highly efficient open-source music foundation model that brings commercial-grade generation to consumer hardware. On commonly used evaluation metrics, ACE-Step v1.5 achieves quality beyond most commercial music models while remaining extremely fast—under 2 seconds per full song on an A100 and under 10 seconds on an RTX 3090. The model runs locally with less than 4GB of VRAM, and supports lightweight personalization: users can train a LoRA from just a few songs to capture their own style.
+## 🚀 Quick Start
 
-🌉 At its core lies a novel hybrid architecture where the Language Model (LM) functions as an omni-capable planner: it transforms simple user queries into comprehensive song blueprints—scaling from short loops to 10-minute compositions—while synthesizing metadata, lyrics, and captions via Chain-of-Thought to guide the Diffusion Transformer (DiT). ⚡ Uniquely, this alignment is achieved through intrinsic reinforcement learning relying solely on the model's internal mechanisms, thereby eliminating the biases inherent in external reward models or human preferences. 🎚️
+### Prerequisites
 
-🔮 Beyond standard synthesis, ACE-Step v1.5 unifies precise stylistic control with versatile editing capabilities—such as cover generation, repainting, and vocal-to-BGM conversion—while maintaining strict adherence to prompts across 50+ languages. This paves the way for powerful tools that seamlessly integrate into the creative workflows of music artists, producers, and content creators. 🎸
+- **GPU**: NVIDIA GPU with 8GB+ VRAM (16GB+ recommended)
+- **OS**: Linux or macOS (Windows via WSL)
+- **CUDA**: 11.8+ (for NVIDIA GPUs)
+- **Python**: 3.10 or 3.11
 
+### Installation
 
-## ✨ Features
-
-<p align="center">
-    <img src="./assets/application_map.png" width="100%" alt="ACE-Step Framework">
-</p>
-
-### ⚡ Performance
-- ✅ **Ultra-Fast Generation** — Under 2s per full song on A100, under 10s on RTX 3090 (0.5s to 10s on A100 depending on think mode & diffusion steps)
-- ✅ **Flexible Duration** — Supports 10 seconds to 10 minutes (600s) audio generation
-- ✅ **Batch Generation** — Generate up to 8 songs simultaneously
-
-### 🎵 Generation Quality
-- ✅ **Commercial-Grade Output** — Quality beyond most commercial music models (between Suno v4.5 and Suno v5)
-- ✅ **Rich Style Support** — 1000+ instruments and styles with fine-grained timbre description
-- ✅ **Multi-Language Lyrics** — Supports 50+ languages with lyrics prompt for structure & style control
-
-### 🎛️ Versatility & Control
-
-| Feature | Description |
-|---------|-------------|
-| ✅ Reference Audio Input | Use reference audio to guide generation style |
-| ✅ Cover Generation | Create covers from existing audio |
-| ✅ Repaint & Edit | Selective local audio editing and regeneration |
-| ✅ Track Separation | Separate audio into individual stems |
-| ✅ Multi-Track Generation | Add layers like Suno Studio's "Add Layer" feature |
-| ✅ Vocal2BGM | Auto-generate accompaniment for vocal tracks |
-| ✅ Metadata Control | Control duration, BPM, key/scale, time signature |
-| ✅ Simple Mode | Generate full songs from simple descriptions |
-| ✅ Query Rewriting | Auto LM expansion of tags and lyrics |
-| ✅ Audio Understanding | Extract BPM, key/scale, time signature & caption from audio |
-| ✅ LRC Generation | Auto-generate lyric timestamps for generated music |
-| ✅ LoRA Training | One-click annotation & training in Gradio. 8 songs, 1 hour on 3090 (12GB VRAM) |
-| ✅ Quality Scoring | Automatic quality assessment for generated audio |
-
-## Staying ahead
------------------
-Star ACE-Step on GitHub and be instantly notified of new releases
-![](assets/star.gif)
-
-## ⚡ Quick Start
-
-> **Requirements:** Python 3.11+, CUDA GPU recommended (also supports MPS / ROCm / Intel XPU / CPU)
+#### 1. Clone the Repository
 
 ```bash
-# 1. Install uv
-curl -LsSf https://astral.sh/uv/install.sh | sh          # macOS / Linux
-# powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"  # Windows
+git clone https://github.com/keplar-404/ace-step1.5.git
+cd ace-step1.5
+```
 
-# 2. Clone & install
-git clone https://github.com/ACE-Step/ACE-Step-1.5.git
-cd ACE-Step-1.5
+#### 2. Install UV Package Manager
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+After installation, add to PATH:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+#### 3. Install Dependencies
+
+```bash
 uv sync
-
-# 3. Launch Gradio UI (models auto-download on first run)
-uv run acestep
-
-# Or launch REST API server
-uv run acestep-api
 ```
 
-Open http://localhost:7860 (Gradio) or http://localhost:8001 (API).
+This will:
+- Create a virtual environment in `.venv/`
+- Install all Python dependencies (~140 packages)
+- Download PyTorch with CUDA support
 
-> 📦 **Windows users:** A [portable package](https://files.acemusic.ai/acemusic/win/ACE-Step-1.5.7z) with pre-installed dependencies is available. See [Installation Guide](./docs/en/INSTALL.md#-windows-portable-package).
+**Note**: First run will take 5-10 minutes to download and install everything.
 
-> 📖 **Full installation guide** (AMD/ROCm, Intel GPU, CPU, environment variables, command-line options): [English](./docs/en/INSTALL.md) | [中文](./docs/zh/INSTALL.md) | [日本語](./docs/ja/INSTALL.md)
+### First Run
 
-### 💡 Which Model Should I Choose?
-
-| Your GPU VRAM | Recommended LM Model | Backend | Notes |
-|---------------|---------------------|---------|-------|
-| **≤6GB** | None (DiT only) | — | LM disabled by default; INT8 quantization + full CPU offload |
-| **6-8GB** | `acestep-5Hz-lm-0.6B` | `pt` | Lightweight LM with PyTorch backend |
-| **8-16GB** | `acestep-5Hz-lm-0.6B` / `1.7B` | `vllm` | 0.6B for 8-12GB, 1.7B for 12-16GB |
-| **16-24GB** | `acestep-5Hz-lm-1.7B` | `vllm` | 4B available on 20GB+; no offload needed on 20GB+ |
-| **≥24GB** | `acestep-5Hz-lm-4B` | `vllm` | Best quality, all models fit without offload |
-
-The UI automatically selects the best configuration for your GPU. All settings (LM model, backend, offloading, quantization) are tier-aware and pre-configured.
-
-> 📖 GPU compatibility details: [English](./docs/en/GPU_COMPATIBILITY.md) | [中文](./docs/zh/GPU_COMPATIBILITY.md) | [日本語](./docs/ja/GPU_COMPATIBILITY.md) | [한국어](./docs/ko/GPU_COMPATIBILITY.md)
-
-## 🚀 Launch Scripts
-
-Ready-to-use launch scripts for all platforms with auto environment detection, update checking, and dependency installation.
-
-| Platform | Scripts | Backend |
-|----------|---------|---------|
-| **Windows** | `start_gradio_ui.bat`, `start_api_server.bat` | CUDA |
-| **Windows (ROCm)** | `start_gradio_ui_rocm.bat`, `start_api_server_rocm.bat` | AMD ROCm |
-| **Linux** | `start_gradio_ui.sh`, `start_api_server.sh` | CUDA |
-| **macOS** | `start_gradio_ui_macos.sh`, `start_api_server_macos.sh` | MLX (Apple Silicon) |
+#### Interactive CLI
 
 ```bash
-# Windows
-start_gradio_ui.bat
-
-# Linux
-chmod +x start_gradio_ui.sh && ./start_gradio_ui.sh
-
-# macOS (Apple Silicon)
-chmod +x start_gradio_ui_macos.sh && ./start_gradio_ui_macos.sh
+uv run python cli.py
 ```
 
-> 📖 **Script configuration & customization:** [English](./docs/en/INSTALL.md#-launch-scripts) | [中文](./docs/zh/INSTALL.md#-启动脚本) | [日本語](./docs/ja/INSTALL.md#-起動スクリプト)
+The wizard will guide you through:
+1. Choosing a task type (text2music, cover, etc.)
+2. Entering music description/lyrics
+3. Configuring generation parameters
 
-## 📚 Documentation
+**Models will auto-download** on first run (~9-10GB from HuggingFace).
 
-### Usage Guides
-
-| Method | Description | Documentation |
-|--------|-------------|---------------|
-| 🖥️ **Gradio Web UI** | Interactive web interface for music generation | [Guide](./docs/en/GRADIO_GUIDE.md) |
-| 🎚️ **Studio UI** | Optional HTML frontend (DAW-like) | [Guide](./docs/en/studio.md) |
-| 🐍 **Python API** | Programmatic access for integration | [Guide](./docs/en/INFERENCE.md) |
-| 🌐 **REST API** | HTTP-based async API for services | [Guide](./docs/en/API.md) |
-| ⌨️ **CLI** | Interactive wizard and configuration | [Guide](./docs/en/CLI.md) |
-
-### Setup & Configuration
-
-| Topic | Documentation |
-|-------|---------------|
-| 📦 Installation (all platforms) | [English](./docs/en/INSTALL.md) \| [中文](./docs/zh/INSTALL.md) \| [日本語](./docs/ja/INSTALL.md) |
-| 🎮 GPU Compatibility | [English](./docs/en/GPU_COMPATIBILITY.md) \| [中文](./docs/zh/GPU_COMPATIBILITY.md) \| [日本語](./docs/ja/GPU_COMPATIBILITY.md) |
-| 🔧 GPU Troubleshooting | [English](./docs/en/GPU_TROUBLESHOOTING.md) |
-| 🔬 Benchmark & Profiling | [English](./docs/en/BENCHMARK.md) \| [中文](./docs/zh/BENCHMARK.md) |
-
-### Multi-Language Docs
-
-| Language | API | Gradio | Inference | Tutorial | Install | Benchmark |
-|----------|-----|--------|-----------|----------|---------|-----------|
-| 🇺🇸 English | [Link](./docs/en/API.md) | [Link](./docs/en/GRADIO_GUIDE.md) | [Link](./docs/en/INFERENCE.md) | [Link](./docs/en/Tutorial.md) | [Link](./docs/en/INSTALL.md) | [Link](./docs/en/BENCHMARK.md) |
-| 🇨🇳 中文 | [Link](./docs/zh/API.md) | [Link](./docs/zh/GRADIO_GUIDE.md) | [Link](./docs/zh/INFERENCE.md) | [Link](./docs/zh/Tutorial.md) | [Link](./docs/zh/INSTALL.md) | [Link](./docs/zh/BENCHMARK.md) |
-| 🇯🇵 日本語 | [Link](./docs/ja/API.md) | [Link](./docs/ja/GRADIO_GUIDE.md) | [Link](./docs/ja/INFERENCE.md) | [Link](./docs/ja/Tutorial.md) | [Link](./docs/ja/INSTALL.md) | — |
-| 🇰🇷 한국어 | [Link](./docs/ko/API.md) | [Link](./docs/ko/GRADIO_GUIDE.md) | [Link](./docs/ko/INFERENCE.md) | [Link](./docs/ko/Tutorial.md) | — | — |
-
-## 📖 Tutorial
-
-**🎯 Must Read:** Comprehensive guide to ACE-Step 1.5's design philosophy and usage methods.
-
-| Language | Link |
-|----------|------|
-| 🇺🇸 English | [English Tutorial](./docs/en/Tutorial.md) |
-| 🇨🇳 中文 | [中文教程](./docs/zh/Tutorial.md) |
-| 🇯🇵 日本語 | [日本語チュートリアル](./docs/ja/Tutorial.md) |
-
-This tutorial covers: mental models and design philosophy, model architecture and selection, input control (text and audio), inference hyperparameters, random factors and optimization strategies.
-
-## 🔨 Train
-
-See the **LoRA Training** tab in Gradio UI for one-click training, or check [Gradio Guide - LoRA Training](./docs/en/GRADIO_GUIDE.md#lora-training) for details.
-
-## 🏗️ Architecture
-
-<p align="center">
-    <img src="./assets/ACE-Step_framework.png" width="100%" alt="ACE-Step Framework">
-</p>
-
-## 🦁 Model Zoo
-
-<p align="center">
-    <img src="./assets/model_zoo.png" width="100%" alt="Model Zoo">
-</p>
-
-### DiT Models
-
-| DiT Model | Pre-Training | SFT | RL | CFG | Step | Refer audio | Text2Music | Cover | Repaint | Extract | Lego | Complete | Quality | Diversity | Fine-Tunability | Hugging Face |
-|-----------|:------------:|:---:|:--:|:---:|:----:|:-----------:|:----------:|:-----:|:-------:|:-------:|:----:|:--------:|:-------:|:---------:|:---------------:|--------------|
-| `acestep-v15-base` | ✅ | ❌ | ❌ | ✅ | 50 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Medium | High | Easy | [Link](https://huggingface.co/ACE-Step/acestep-v15-base) |
-| `acestep-v15-sft` | ✅ | ✅ | ❌ | ✅ | 50 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | High | Medium | Easy | [Link](https://huggingface.co/ACE-Step/acestep-v15-sft) |
-| `acestep-v15-turbo` | ✅ | ✅ | ❌ | ❌ | 8 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | Very High | Medium | Medium | [Link](https://huggingface.co/ACE-Step/Ace-Step1.5) |
-| `acestep-v15-turbo-rl` | ✅ | ✅ | ✅ | ❌ | 8 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | Very High | Medium | Medium | To be released |
-
-### LM Models
-
-| LM Model | Pretrain from | Pre-Training | SFT | RL | CoT metas | Query rewrite | Audio Understanding | Composition Capability | Copy Melody | Hugging Face |
-|----------|---------------|:------------:|:---:|:--:|:---------:|:-------------:|:-------------------:|:----------------------:|:-----------:|--------------|
-| `acestep-5Hz-lm-0.6B` | Qwen3-0.6B | ✅ | ✅ | ✅ | ✅ | ✅ | Medium | Medium | Weak | ✅ |
-| `acestep-5Hz-lm-1.7B` | Qwen3-1.7B | ✅ | ✅ | ✅ | ✅ | ✅ | Medium | Medium | Medium | ✅ |
-| `acestep-5Hz-lm-4B` | Qwen3-4B | ✅ | ✅ | ✅ | ✅ | ✅ | Strong | Strong | Strong | ✅ |
-
-## 🔬 Benchmark
-
-ACE-Step 1.5 includes `profile_inference.py`, a profiling & benchmarking tool that measures LLM, DiT, and VAE timing across devices and configurations.
+#### Quick Example - Generate Instrumental Music
 
 ```bash
-python profile_inference.py                        # Single-run profile
-python profile_inference.py --mode benchmark       # Configuration matrix
+# Start the CLI
+uv run python cli.py
+
+# Follow the prompts:
+# 1. Choose task: 1 (text2music)
+# 2. Simple mode: n
+# 3. Description: upbeat electronic dance music
+# 4. Lyrics: 1 (instrumental)
+# 5. Number of outputs: 1
+# 6. Advanced params: n
+# 7. Start generation: y
 ```
 
-> 📖 **Full guide** (all modes, CLI options, output interpretation): [English](./docs/en/BENCHMARK.md) | [中文](./docs/zh/BENCHMARK.md)
+Output will be saved to `output/` directory as FLAC files.
 
-## 📜 License & Disclaimer
+## 📋 Usage Guide
 
-This project is licensed under [MIT](./LICENSE)
+### Generate Music from Text
 
-ACE-Step enables original music generation across diverse genres, with applications in creative production, education, and entertainment. While designed to support positive and artistic use cases, we acknowledge potential risks such as unintentional copyright infringement due to stylistic similarity, inappropriate blending of cultural elements, and misuse for generating harmful content. To ensure responsible use, we encourage users to verify the originality of generated works, clearly disclose AI involvement, and obtain appropriate permissions when adapting protected styles or materials. By using ACE-Step, you agree to uphold these principles and respect artistic integrity, cultural diversity, and legal compliance. The authors are not responsible for any misuse of the model, including but not limited to copyright violations, cultural insensitivity, or the generation of harmful content.
-
-🔔 Important Notice  
-The only official website for the ACE-Step project is our GitHub Pages site.    
- We do not operate any other websites.  
-🚫 Fake domains include but are not limited to:
-ac\*\*p.com, a\*\*p.org, a\*\*\*c.org  
-⚠️ Please be cautious. Do not visit, trust, or make payments on any of those sites.
-
-## 🙏 Acknowledgements
-
-This project is co-led by ACE Studio and StepFun.
-
-
-## 📖 Citation
-
-If you find this project useful for your research, please consider citing:
-
-```BibTeX
-@misc{gong2026acestep,
-	title={ACE-Step 1.5: Pushing the Boundaries of Open-Source Music Generation},
-	author={Junmin Gong, Yulin Song, Wenxiao Zhao, Sen Wang, Shengyuan Xu, Jing Guo}, 
-	howpublished={\url{https://github.com/ace-step/ACE-Step-1.5}},
-	year={2026},
-	note={GitHub repository}
-}
+```bash
+uv run python cli.py
 ```
+
+Example prompts:
+- "upbeat electronic dance music"
+- "slow blues guitar with harmonica"
+- "orchestral cinematic epic soundtrack"
+- "lo-fi hip hop beats for studying"
+
+### Generate with Lyrics
+
+1. Start CLI: `uv run python cli.py`
+2. Choose task: `1` (text2music)
+3. Enter description: "pop ballad with emotional vocals"
+4. Lyrics option: `4` (paste directly) or `3` (from file)
+5. Paste your lyrics or provide file path
+
+### Batch Generation
+
+Generate multiple variations:
+
+```bash
+uv run python generate_examples.py --num 5
+```
+
+### Using Configuration Files
+
+Save your settings:
+
+```bash
+# First run creates config.toml
+uv run python cli.py
+
+# Reuse settings
+uv run python cli.py -c config.toml
+```
+
+## 🛠️ Advanced Configuration
+
+### Environment Variables
+
+Create `.env` file (copy from `.env.example`):
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` to configure:
+- Model paths
+- GPU settings
+- API endpoints
+- Cache directories
+
+### GPU Memory Tiers
+
+The system auto-detects your GPU and configures limits:
+
+| VRAM | Tier | Max Duration | Max Batch |
+|------|------|--------------|-----------|
+| 8GB  | Low  | 60s          | 1         |
+| 16GB | Mid  | 120s         | 2         |
+| 24GB | High | 180s         | 4         |
+| 32GB+ | Unlimited | 600s    | 8         |
+
+### Custom Duration
+
+Specify duration when generating:
+
+```bash
+# In CLI, choose advanced parameters (y)
+# Set duration: 30 (for 30 seconds)
+```
+
+## 📁 Output Files
+
+Generated audio is saved to `output/` directory:
+
+```
+output/
+├── <uuid>.flac          # Generated audio (FLAC format, 44.1kHz)
+└── <uuid>_metadata.json # Generation parameters (optional)
+```
+
+## 🐛 Troubleshooting
+
+### Models Not Downloading
+
+If models fail to download automatically:
+
+```bash
+# Check internet connection
+# Verify HuggingFace access
+# Check disk space (need ~15GB free)
+```
+
+### CUDA/GPU Issues
+
+```bash
+# Verify CUDA installation
+nvidia-smi
+
+# Check PyTorch CUDA support
+uv run python -c "import torch; print(torch.cuda.is_available())"
+```
+
+### Out of Memory Errors
+
+- Reduce batch size to 1
+- Generate shorter durations
+- Close other GPU applications
+- Use tiled VAE decoding (enabled by default)
+
+### Module Import Errors
+
+```bash
+# Reinstall dependencies
+uv sync --reinstall
+```
+
+## 🔧 Model Management
+
+### Downloaded Models Location
+
+Models are stored in `checkpoints/`:
+
+```
+checkpoints/
+├── acestep-v15-turbo/           # Main DiT model (4.79GB)
+├── acestep-5Hz-lm-1.7B/         # Language model (3.71GB)
+├── vae/                         # VAE decoder (337MB)
+└── Qwen3-Embedding-0.6B/        # Text encoder (1.19GB)
+```
+
+### Managing Disk Space
+
+```bash
+# Check model sizes
+du -sh checkpoints/*
+
+# Remove downloaded models (will re-download on next use)
+rm -rf checkpoints/
+```
+
+## 🌐 Cloud GPU Setup
+
+### Thunder Compute (Recommended)
+
+```bash
+# Install Thunder CLI
+curl https://thunder.softwar.ai/install.sh | sh
+
+# Create instance
+tnr launch --gpu-type=nvidia-rtx-a6000 --gpu-count=1
+
+# Connect
+tnr connect 0
+
+# On cloud instance:
+git clone https://github.com/keplar-404/ace-step1.5.git
+cd ace-step1.5
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="/home/ubuntu/.local/bin:$PATH"
+uv sync
+uv run python cli.py
+```
+
+### Other Cloud Providers
+
+Works on any cloud GPU instance with:
+- NVIDIA GPU (T4, A10, A100, RTX series)
+- Ubuntu 20.04+ or similar Linux
+- CUDA 11.8+
+
+## 📊 Performance
+
+Typical generation times on various GPUs:
+
+| GPU | VRAM | 30s Song | 60s Song |
+|-----|------|----------|----------|
+| RTX 3060 | 12GB | ~45s | ~90s |
+| RTX 3090 | 24GB | ~35s | ~70s |
+| RTX A6000 | 48GB | ~40s | ~80s |
+| A100 | 80GB | ~30s | ~60s |
+
+*Times include LM + DiT + VAE processing*
+
+## 🤝 Contributing
+
+This is a cleaned and streamlined fork of the original ACE-Step project, focusing on core music generation features.
+
+### Changes from Original
+
+- Removed training code
+- Removed UI/Gradio interface
+- Removed platform-specific launchers
+- Fixed MLX import compatibility
+- Streamlined CLI for direct usage
+
+## 📝 License
+
+See `LICENSE` file for details.
+
+## 🔗 Links
+
+- **Original Repository**: [ACE-Step Official](https://github.com/ACE-Step/ACE-Step)
+- **This Fork**: [keplar-404/ace-step1.5](https://github.com/keplar-404/ace-step1.5)
+
+## ⚠️ Known Issues
+
+1. **VLLM Backend**: May fail with libcuda.so linking issues on some systems
+   - **Impact**: Falls back to PyTorch (slightly slower, but fully functional)
+   - **Fix**: Run `sudo /sbin/ldconfig` to refresh linker cache
+
+2. **TorchAO Warning**: Version incompatibility with PyTorch 2.10+
+   - **Impact**: None (cpp extensions skipped, pure Python fallback works)
+
+## 💡 Tips
+
+1. **First generation is slower** - Models are loaded into GPU memory
+2. **Subsequent generations are faster** - Models stay loaded
+3. **Use descriptive prompts** - More detail = better results
+4. **Experiment with seeds** - Use `--seed` for reproducible results
+5. **Save good configs** - Reuse with `-c config.toml`
+
+## 🎯 Example Outputs
+
+With the default settings, you can generate:
+- 30-second songs in ~40-50s
+- Professional FLAC audio quality
+- Auto-generated metadata (BPM, key, etc.)
+- Expandable captions for refined control
+
+---
+
+**Ready to create music with AI!** 🎵
+
+Start with: `uv run python cli.py`
