@@ -130,6 +130,108 @@ uv run python cli.py
 uv run python cli.py -c config.toml
 ```
 
+## 📦 Advanced Models
+
+### Available Models
+
+The system comes with default models, but you can download higher-quality alternatives:
+
+#### List All Available Models
+
+```bash
+uv run python -m acestep.model_downloader --list
+```
+
+#### Model Comparison
+
+| Model Type | Name | Size | Quality | Speed | Use Case |
+|------------|------|------|---------|-------|----------|
+| **LM Models** (Language/Metadata Generation) |
+| LM 0.6B | `acestep-5Hz-lm-0.6B` | 1.2GB | Good | Fast | Quick tests |
+| LM 1.7B | `acestep-5Hz-lm-1.7B` | 3.7GB | Better | Medium | Default ✓ |
+| **LM 4B** | `acestep-5Hz-lm-4B` | 8GB | **Best** | Slower | **Highest quality** ⭐ |
+| **DiT Models** (Audio Generation) |
+| Turbo | `acestep-v15-turbo` | 4.8GB | Good | **Fastest** | Default ✓ |
+| **SFT** | `acestep-v15-sft` | ~5GB | **Better** | Medium | **Higher quality** ⭐ |
+| Base | `acestep-v15-base` | ~5GB | Good | Slow | Research |
+| Turbo Shift1 | `acestep-v15-turbo-shift1` | ~5GB | Good | Fast | Alternative |
+| Turbo Shift3 | `acestep-v15-turbo-shift3` | ~5GB | Good | Fast | Alternative |
+
+### Download Advanced Models
+
+#### Recommended: Best Quality Setup
+
+For the highest quality output (recommended for RTX 3090/A6000/A100):
+
+```bash
+# Download 4B LM model (best quality lyrics/metadata)
+uv run python -m acestep.model_downloader --model acestep-5Hz-lm-4B
+
+# Download SFT DiT model (best quality audio)
+uv run python -m acestep.model_downloader --model acestep-v15-sft
+```
+
+#### Download All Models
+
+Download everything at once (~20GB total):
+
+```bash
+uv run python -m acestep.model_downloader --all
+```
+
+#### Download Specific Model
+
+```bash
+# Download any specific model
+uv run python -m acestep.model_downloader --model <model-name>
+
+# Examples:
+uv run python -m acestep.model_downloader --model acestep-5Hz-lm-4B
+uv run python -m acestep.model_downloader --model acestep-v15-sft
+```
+
+### Using Advanced Models
+
+After downloading, select them in the CLI:
+
+```bash
+uv run python cli.py
+```
+
+**During the wizard:**
+1. Choose task type (e.g., `1` for text2music)
+2. **Select DiT model**: Choose `acestep-v15-sft` (or type the name)
+3. **Select LM model**: Choose `acestep-5Hz-lm-4B` (or type the name)
+4. Continue with your prompts
+
+**Example session with best quality models:**
+```
+--- Available DiT Models ---
+1. acestep-v15-turbo
+2. acestep-v15-sft
+Choose a model (number or name) [default: auto]: 2
+
+--- Available LM Models ---
+1. acestep-5Hz-lm-1.7B
+2. acestep-5Hz-lm-4B
+Choose a model (number or name) [default: auto]: 2
+```
+
+### Force Re-download
+
+If you need to re-download a model:
+
+```bash
+uv run python -m acestep.model_downloader --model <model-name> --force
+```
+
+### Custom Download Location
+
+```bash
+uv run python -m acestep.model_downloader --model <model-name> --dir /path/to/checkpoints
+```
+
+
 ## 🛠️ Advanced Configuration
 
 ### Environment Variables
