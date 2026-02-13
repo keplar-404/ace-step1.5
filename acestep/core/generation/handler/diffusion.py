@@ -3,7 +3,14 @@
 from typing import Any, Dict
 
 import torch
-from acestep.mlx_dit.generate import mlx_generate_diffusion
+
+# Try to import MLX support, but gracefully handle if it's not available
+try:
+    from acestep.mlx_dit.generate import mlx_generate_diffusion
+except ImportError:
+    # MLX support not available - the _mlx_run_diffusion method will not be called
+    # when use_mlx_dit is False or mlx_decoder is None
+    mlx_generate_diffusion = None
 
 
 class DiffusionMixin:
